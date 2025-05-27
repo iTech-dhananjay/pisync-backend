@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: pisync_user
+      POSTGRES_PASSWORD: pisync_pass
+      POSTGRES_DB: pisync_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  api:
+    build: .
+    command: npm run dev
+    environment:
+      PORT: ${PORT}
+      DATABASE_URL: postgres://pisync_user:pisync_pass@db:5432/pisync_db
+    depends_on:
+      - db
+    ports:
+      - '4000:4000'
